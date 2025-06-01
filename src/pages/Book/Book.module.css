@@ -50,9 +50,11 @@
 .BookImage {
     width: calc(40% - 80px);
     background-position: center;
-    background-size: cover;
+    background-repeat: no-repeat;
+    background-size: contain;
     margin-right: 80px;
     margin-left: 120px;
+  
 }
 .Book img {
     width: 40%;
@@ -167,11 +169,12 @@
     }
     .BookImage {
         height: 300px;
-        width: 100%;
+        width: 60%;
         background-repeat: no-repeat;
         background-size: contain;
-        background-position: center center;
+        background-position: center;
         margin-inline: 0;
+       
     }
     .BookContent {
         align-items: center;
@@ -183,6 +186,15 @@
 @media all and (max-width: 600px) {
     .BookContent {
         width: 90%;
+    }
+    .BookImage {
+        height: 300px;
+        width: 90%;
+        background-repeat: no-repeat;
+        background-size: contain;
+        background-position: center center;
+        margin-inline: 0;
+        
     }
 
 }
