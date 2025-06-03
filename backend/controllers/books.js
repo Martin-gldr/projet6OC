@@ -61,18 +61,18 @@ exports.modifyBook = (req, res, next)=>{
     delete bookObject._userId
     Book.findOne({_id: req.params.id}).then((book)=>{
         if (book.userId != req.auth.userId){
-            res.status(401).json({message: 'non authrisé'})
+            res.status(401).json({message: 'Not authorized'})
         }else{
             Book.updateOne({ _id: req.params.id}, { ...bookObject, _id: req.params.id})
             .then(() => res.status(200).json({message : 'Objet modifié!'}))
             .catch(error => res.status(401).json({ error }));
         }
-    }).catch(error=> res.status(400).json({error}))
+    }).catch(error=> res.status(500).json({error}))
 }
 
 
 exports.getAllBooks = (req, res, next) => {
-    Book.find().then(books => res.status(200).json(books)).catch(error => res.status(400).json(error))  
+    Book.find().then(books => res.status(200).json(books)).catch(error => res.status(404).json(error))  
     
    
 }
@@ -122,7 +122,7 @@ exports.addBookRating = (req, res, next)=> {
                     
                     res.status(200).json(book)}
                 )})
-                .catch(error => res.status(404).json(error))
+                .catch(error => res.status(400).json(error))
 
             
         }
@@ -130,7 +130,7 @@ exports.addBookRating = (req, res, next)=> {
 
 
 
-    }).catch(error => res.status(400).json({ error}))
+    }).catch(error => res.status(500).json({ error}))
 
   
 
@@ -138,21 +138,11 @@ exports.addBookRating = (req, res, next)=> {
 
 
 exports.bestRating = (req,res, next) =>{
-    Book.find().then((book)=>{
-        const averageRatingListe = book.map((book)=> book.averageRating)
-        const max = Math.max(...averageRatingListe);
-        const secBest = averageRatingListe.filter(rating => rating != max)
-        const secMax = Math.max(...secBest)
-        const thirdBest = secBest.filter(rating => rating != secMax)
-        const thirdMax = Math.max(...thirdBest)
-
-        const bestBooks = book.filter(book => book.averageRating === max || book.averageRating === secMax || book.averageRating === thirdMax);
-        const bestBooksDecr = bestBooks.sort((a,b)=> b.averageRating - a.averageRating)
-        const bestBooksSliced = bestBooksDecr.slice(0,3)
-        
-        res.status(200).json(bestBooksSliced);
-
-    }).catch((error)=> res.status(400).json({error}))
+    Book.find()
+    .sort({averageRating: -1})
+    .limit(3)
+    .then((book)=> res.status(200).json(book))
+    .catch((error)=> res.status(500).json({error}))
 
    
 }
