@@ -100,13 +100,15 @@ exports.addBookRating = (req, res, next)=> {
 
     Book.findOne({ _id: req.params.id }).then((book) => {
 
-        const userId = req.body.userId
+        const UserId = req.auth.userId
         const grade = req.body.rating
-        if (book.ratings.includes({ userId, grade })) {
-            res.status(401).json({ message: "livre déja noté" })
+      
+        if (book.ratings.find((rating)=> rating.userId === UserId)) {
+          
+            res.status(401).json({ message : "livre déja noté" })
 
         } else {
-            book.ratings.push({ userId, grade })
+            book.ratings.push({ userId: UserId, grade })
 
             book.save()
             .then(() => { 
